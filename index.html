@@ -203,18 +203,18 @@
                 let gallery = document.getElementById('gallery');
                 if (files && files.length > 0) {
                     files.forEach((file) => {
-                        const imgDiv = document.createElement('div');
-                        imgDiv.classList.add('inner-container');
-                        imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data -file-id', file.id);
-                        imgDiv.addEventListener('click', function() {
-                            const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.webContentLink;
-                            previewImage.alt = file.name;
-                            previewImage.crossOrigin = 'anonymous';  // Add this line
-                        });
-                        gallery.appendChild(imgDiv);
-                    });
+    const imgDiv = document.createElement('div');
+    imgDiv.classList.add('inner-container');
+    imgDiv.style.backgroundImage = `url(${file.webContentLink})`; // Use webContentLink instead of thumbnailLink
+    imgDiv.setAttribute('data-file-id', file.id);
+    imgDiv.addEventListener('click', function() {
+        const previewImage = document.getElementById('preview-image');
+        previewImage.src = file.webContentLink;
+        previewImage.alt = file.name;
+        previewImage.crossOrigin = 'anonymous';
+    });
+    gallery.appendChild(imgDiv);
+});
                 }
             });
         }
