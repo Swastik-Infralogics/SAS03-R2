@@ -171,7 +171,7 @@
     <!-- Logo -->
     <img src="Swastik S.png" alt="Swastik Logo" class="logo">
 
-    <!-- JavaScript to Load Images from Google Drive API -->
+    <!-- Google API -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script>
         function loadClient() {
@@ -193,7 +193,7 @@
             gapi.client.drive.files.list({
                 'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
                 'pageSize': 50,  // Adjust the number of images loaded
-                'fields': "nextPageToken, files(id, name, thumbnailLink)"
+                'fields': "nextPageToken, files(id, name, thumbnailLink, webContentLink)"
             }).then(function(response) {
                 const files = response.result.files;
                 let gallery = document.getElementById('gallery');
@@ -202,14 +202,14 @@
                         const imgDiv = document.createElement('div');
                         imgDiv.classList.add('inner-container');
                         imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data-image', file.thumbnailLink);
+                        imgDiv.setAttribute('data-image', file.webContentLink); // Use full resolution link for the preview
                         imgDiv.title = file.name;
                         gallery.appendChild(imgDiv);
                         
                         imgDiv.addEventListener('click', function() {
-                            const firstImage = galleryItems[0].getAttribute('data-image');
-                            previewImage.src = firstImage;
-                            previewImage.alt = galleryItems[0].getAttribute('title');
+                            const previewImage = document.getElementById('preview-image');
+                            previewImage.src = file.webContentLink; // Use full resolution link for the preview
+                            previewImage.alt = file.name;
                         });
                     });
                 }
