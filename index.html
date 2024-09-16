@@ -207,9 +207,9 @@
                         gallery.appendChild(imgDiv);
                         
                         imgDiv.addEventListener('click', function() {
-                            const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.document;
-                            previewImage.alt = file.name;
+                            const firstImage = galleryItems[0].getAttribute('data-image');
+                            previewImage.src = firstImage;
+                            previewImage.alt = galleryItems[0].getAttribute('title');
                         });
                     });
                 }
