@@ -212,8 +212,8 @@
                         
                         imgDiv.addEventListener('click', function() {
                             const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.thumbnailLink;
-                            previewImage.alt = file.name;
+                            previewImage.src = firstImage;
+                            previewImage.alt = galleryItems[0].getAttribute('title');
                         });
                     });
                 }
