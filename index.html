@@ -196,7 +196,7 @@
         function listImages() {
             gapi.client.drive.files.list({
                 'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
-                'pageSize': 50,  // Adjust the number of images loaded
+                'pageSize': 200,  // Adjust the number of images loaded
                 'fields': "nextPageToken, files(id, name, thumbnailLink)"
             }).then(function(response) {
                 const files = response.result.files;
