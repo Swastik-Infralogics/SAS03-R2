@@ -7,6 +7,7 @@
     <link rel="icon" href="Swastik S.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        /* Your existing styles remain unchanged */
         /* Full-page background video */
         #bg-video {
             position: fixed;
@@ -64,6 +65,7 @@
             box-sizing: border-box;
         }
 
+        /* Updated preview section */
         .preview-section {
             width: 50%;
             display: flex;
@@ -72,6 +74,16 @@
             overflow: hidden;
             padding: 20px;
             box-sizing: border-box;
+            max-height: 80vh; /* Adjusted to limit the preview section size */
+        }
+
+        /* Updated preview image */
+        .preview-section img {
+            width: auto;
+            height: 100%; /* Make the image fill the height of the preview section */
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Gallery styles */
@@ -102,14 +114,6 @@
 
         .inner-container:hover {
             transform: scale(1.05);
-        }
-
-        /* Preview image */
-        .preview-section img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Logo */
@@ -171,7 +175,7 @@
     <!-- Logo -->
     <img src="Swastik S.png" alt="Swastik Logo" class="logo">
 
-    <!-- Google API -->
+    <!-- JavaScript to Load Images from Google Drive API -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script>
         function loadClient() {
@@ -193,7 +197,7 @@
             gapi.client.drive.files.list({
                 'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
                 'pageSize': 50,  // Adjust the number of images loaded
-                'fields': "nextPageToken, files(id, name, thumbnailLink, webContentLink)"
+                'fields': "nextPageToken, files(id, name, thumbnailLink)"
             }).then(function(response) {
                 const files = response.result.files;
                 let gallery = document.getElementById('gallery');
@@ -202,13 +206,13 @@
                         const imgDiv = document.createElement('div');
                         imgDiv.classList.add('inner-container');
                         imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data-image', file.webContentLink); // Use full resolution link for the preview
+                        imgDiv.setAttribute('data-image', file.thumbnailLink);
                         imgDiv.title = file.name;
                         gallery.appendChild(imgDiv);
                         
                         imgDiv.addEventListener('click', function() {
                             const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.thumbnailLink; // Use full resolution link for the preview
+                            previewImage.src = file.thumbnailLink;
                             previewImage.alt = file.name;
                         });
                     });
