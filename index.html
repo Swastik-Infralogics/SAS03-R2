@@ -75,6 +75,7 @@
             padding: 50px;
             box-sizing: border-box;
             max-height: 80vh; /* Adjusted to limit the preview section size */
+            max-width: 100%; /* Add this line */
         }
 
         /* Updated preview image */
@@ -84,6 +85,7 @@
             max-width: 100%;
             border-radius: 10px;
             box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
+            object-fit: contain; /* Add this line */
         }
 
         /* Gallery styles */
@@ -156,7 +158,6 @@
 
     <!-- Main Container -->
     <div class="main-container">
-
         <!-- Gallery Section -->
         <div class="gallery-section">
             <h1>Image Gallery - NHAI Project - SAS03</h1>
@@ -169,7 +170,6 @@
         <div class="preview-section">
             <img id="preview-image" src="" alt="">
         </div>
-
     </div>
 
     <!-- Logo -->
@@ -197,7 +197,7 @@
             gapi.client.drive.files.list({
                 'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
                 'pageSize': 200,  // Adjust the number of images loaded
-                'fields': "nextPageToken, files(id, name, thumbnailLink)"
+                'fields': "nextPageToken, files(id, name, webContentLink, thumbnailLink)"
             }).then(function(response) {
                 const files = response.result.files;
                 let gallery = document.getElementById('gallery');
@@ -206,25 +206,18 @@
                         const imgDiv = document.createElement('div');
                         imgDiv.classList.add('inner-container');
                         imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data-image', file.thumbnailLink);
-                        imgDiv.title = file.name;
-                        gallery.appendChild(imgDiv);
-                        
+                        imgDiv.setAttribute('data -file-id', file.id);
                         imgDiv.addEventListener('click', function() {
                             const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.thumbnailLink;
+                            previewImage.src = file.webContentLink;
                             previewImage.alt = file.name;
+                            previewImage.crossOrigin = 'anonymous';  // Add this line
                         });
+                        gallery.appendChild(imgDiv);
                     });
                 }
             });
         }
-
-        // Initialize the API on document load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadClient();
-        });
     </script>
-
 </body>
 </html>
