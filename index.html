@@ -7,7 +7,6 @@
     <link rel="icon" href="Swastik S.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Your existing styles remain unchanged */
         /* Full-page background video */
         #bg-video {
             position: fixed;
@@ -65,7 +64,6 @@
             box-sizing: border-box;
         }
 
-        /* Updated preview section */
         .preview-section {
             width: 50%;
             display: flex;
@@ -74,16 +72,6 @@
             overflow: hidden;
             padding: 20px;
             box-sizing: border-box;
-            max-height: 80vh; /* Adjusted to limit the preview section size */
-        }
-
-        /* Updated preview image */
-        .preview-section img {
-            width: auto;
-            height: 100%; /* Make the image fill the height of the preview section */
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Gallery styles */
@@ -114,6 +102,14 @@
 
         .inner-container:hover {
             transform: scale(1.05);
+        }
+
+        /* Preview image */
+        .preview-section img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Logo */
@@ -210,11 +206,10 @@
                         imgDiv.title = file.name;
                         gallery.appendChild(imgDiv);
                         
-                         // Display the first image by default
-                            if (galleryItems.length > 0) {
-                            const firstImage = galleryItems[0].getAttribute('data-image');
-                            previewImage.src = firstImage;
-                            previewImage.alt = galleryItems[0].getAttribute('title');
+                        imgDiv.addEventListener('click', function() {
+                            const previewImage = document.getElementById('preview-image');
+                            previewImage.src = file.document;
+                            previewImage.alt = file.name;
                         });
                     });
                 }
