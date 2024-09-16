@@ -65,6 +65,7 @@
             box-sizing: border-box;
         }
 
+        /* Updated preview section */
         .preview-section {
             width: 50%;
             display: flex;
@@ -73,6 +74,16 @@
             overflow: hidden;
             padding: 20px;
             box-sizing: border-box;
+            max-height: 80vh; /* Adjusted to limit the preview section size */
+        }
+
+        /* Updated preview image */
+        .preview-section img {
+            width: auto;
+            height: 100%; /* Make the image fill the height of the preview section */
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Gallery styles */
@@ -103,14 +114,6 @@
 
         .inner-container:hover {
             transform: scale(1.05);
-        }
-
-        /* Preview image */
-        .preview-section img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Logo */
