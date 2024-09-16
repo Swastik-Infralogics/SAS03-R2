@@ -197,7 +197,7 @@
             gapi.client.drive.files.list({
                 'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
                 'pageSize': 200,  // Adjust the number of images loaded
-                'fields': "nextPageToken, files(id, name, thumbnailLink)"
+                'fields': "nextPageToken, files(id, name, webContentLink)"
             }).then(function(response) {
                 const files = response.result.files;
                 let gallery = document.getElementById('gallery');
@@ -205,14 +205,14 @@
                     files.forEach((file) => {
                         const imgDiv = document.createElement('div');
                         imgDiv.classList.add('inner-container');
-                        imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data-image', file.thumbnailLink);
+                        imgDiv.style.backgroundImage = `url(${file.webContentLink})`;
+                        imgDiv.setAttribute('data-image', file.webContentLink);
                         imgDiv.title = file.name;
                         gallery.appendChild(imgDiv);
                         
                         imgDiv.addEventListener('click', function() {
                             const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.thumbnailLink;
+                            previewImage.src = file.webContentLink;
                             previewImage.alt = file.name;
                         });
                     });
