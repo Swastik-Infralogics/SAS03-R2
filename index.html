@@ -207,27 +207,10 @@
                         imgDiv.title = file.name;
                         gallery.appendChild(imgDiv);
                         
-                    }
-        document.addEventListener('DOMContentLoaded', function() {
-            const previewImage = document.getElementById('preview-image');
-            const galleryItems = document.querySelectorAll('.inner-container');
-
-            function showPreview(event) {
-                const imgSrc = event.currentTarget.getAttribute('data-image');
-                previewImage.src = imgSrc;
-                previewImage.alt = event.currentTarget.getAttribute('title');
-            }
-
-            galleryItems.forEach(item => {
-                item.addEventListener('mouseover', showPreview);
-                item.addEventListener('click', showPreview);
-            });
-
-            // Display the first image by default
-            if (galleryItems.length > 0) {
-                const firstImage = galleryItems[0].getAttribute('data-image');
-                previewImage.src = firstImage;
-                previewImage.alt = galleryItems[0].getAttribute('title');
+                        imgDiv.addEventListener('click', function() {
+                            const previewImage = document.getElementById('preview-image');
+                            previewImage.src = file.thumbnailLink;
+                            previewImage.alt = file.name;
                         });
                     });
                 }
