@@ -65,27 +65,14 @@
             box-sizing: border-box;
         }
 
-        /* Updated preview section */
         .preview-section {
             width: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            padding: 50px;
+            padding: 20px;
             box-sizing: border-box;
-            max-height: 80vh; /* Adjusted to limit the preview section size */
-            max-width: 100%; /* Add this line */
-        }
-
-        /* Updated preview image */
-        .preview-section img {
-            width: auto;
-            height: 100%; /* Make the image fill the height of the preview section */
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
-            object-fit: contain; /* Add this line */
         }
 
         /* Gallery styles */
@@ -116,6 +103,14 @@
 
         .inner-container:hover {
             transform: scale(1.05);
+        }
+
+        /* Preview image */
+        .preview-section img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
         }
 
         /* Logo */
@@ -158,6 +153,7 @@
 
     <!-- Main Container -->
     <div class="main-container">
+
         <!-- Gallery Section -->
         <div class="gallery-section">
             <h1>Image Gallery - NHAI Project - SAS03</h1>
@@ -170,6 +166,7 @@
         <div class="preview-section">
             <img id="preview-image" src="" alt="">
         </div>
+
     </div>
 
     <!-- Logo -->
@@ -181,7 +178,7 @@
         function loadClient() {
             gapi.load("client:auth2", function() {
                 gapi.auth2.init({client_id: "762399051300-ok3rcfci2904o2t87qip11evkce89dhb.apps.googleusercontent.com"});  // Replace with your OAuth 2.0 Client ID
-                gapi.client.setApiKey("AIzaSyAfExdKOvGvadFP4x6Wxcx06cGR2UJliaY");  // Replace with your API Key
+                gapi.client.setApiKey("YOUR_API_KEY");  // Replace with your API Key
                 return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
                     .then(function() { 
                         console.log("GAPI client loaded for API");
@@ -196,8 +193,8 @@
         function listImages() {
             gapi.client.drive.files.list({
                 'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
-                'pageSize': 200,  // Adjust the number of images loaded
-                'fields': "nextPageToken, files(id, name, webContentLink, thumbnailLink)"
+                'pageSize': 50,  // Adjust the number of images loaded
+                'fields': "nextPageToken, files(id, name, thumbnailLink)"
             }).then(function(response) {
                 const files = response.result.files;
                 let gallery = document.getElementById('gallery');
@@ -206,18 +203,25 @@
                         const imgDiv = document.createElement('div');
                         imgDiv.classList.add('inner-container');
                         imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data -file-id', file.id);
+                        imgDiv.setAttribute('data-image', file.thumbnailLink);
+                        imgDiv.title = file.name;
+                        gallery.appendChild(imgDiv);
+                        
                         imgDiv.addEventListener('click', function() {
                             const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.webContentLink;
+                            previewImage.src = file.thumbnailLink;
                             previewImage.alt = file.name;
-                            previewImage.crossOrigin = 'anonymous';  // Add this line
                         });
-                        gallery.appendChild(imgDiv);
                     });
                 }
             });
         }
+
+        // Initialize the API on document load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClient();
+        });
     </script>
+
 </body>
 </html>
