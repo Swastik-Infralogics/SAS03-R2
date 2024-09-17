@@ -7,14 +7,13 @@
     <link rel="icon" href="Swastik S.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Your existing styles remain unchanged */
         /* Full-page background video */
         #bg-video {
             position: fixed;
             top: 0;
             left: 0;
             min-width: 100%;
-            min-height: 100%;
+            min-height:  100%;
             z-index: -1;
             object-fit: cover;
             filter: brightness(0.5);
@@ -157,8 +156,8 @@
         <!-- Gallery Section -->
         <div class="gallery-section">
             <h1>Image Gallery - NHAI Project - SAS03</h1>
-            <div class="inner-containers" id="gallery">
-                <!-- Dynamically loaded images from Google Drive will appear here -->
+            <div class="inner-containers" id="gallery-container">
+                <!-- Image Thumbnails will be loaded here -->
             </div>
         </div>
 
@@ -172,54 +171,49 @@
     <!-- Logo -->
     <img src="Swastik S.png" alt="Swastik Logo" class="logo">
 
-    <!-- JavaScript to Load Images from Google Drive API -->
-    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- JavaScript -->
+    <script src="https://apis.google.com/js/api.js?key=YOUR_API_KEY"></script>
     <script>
-        function loadClient() {
-            gapi.load("client:auth2", function() {
-                gapi.auth2.init({client_id: "762399051300-ok3rcfci2904o2t87qip11evkce89dhb.apps.googleusercontent.com"});  // Replace with your OAuth 2.0 Client ID
-                gapi.client.setApiKey("YOUR_API_KEY");  // Replace with your API Key
-                return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/drive/v3/rest")
-                    .then(function() { 
-                        console.log("GAPI client loaded for API");
-                        listImages();  // Call your image listing function here
-                    },
-                    function(err) { 
-                        console.error("Error loading GAPI client for API", err);
-                    });
-            });
-        }
+        const clientId = '762399051300-ok3rcfci2904o2t87qip11evkce89dhb.apps.googleusercontent.com';
+        const apiKey = 'AIzaSyAfExdKOvGvadFP4x6Wxcx06cGR2UJliaY';
+        const scopes = 'https://www.googleapis.com/auth/drive.readonly';
 
-        function listImages() {
-            gapi.client.drive.files.list({
-                'q': "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
-                'pageSize': 50,  // Adjust the number of images loaded
-                'fields': "nextPageToken, files(id, name, thumbnailLink)"
-            }).then(function(response) {
-                const files = response.result.files;
-                let gallery = document.getElementById('gallery');
-                if (files && files.length > 0) {
-                    files.forEach((file) => {
-                        const imgDiv = document.createElement('div');
-                        imgDiv.classList.add('inner-container');
-                        imgDiv.style.backgroundImage = `url(${file.thumbnailLink})`;
-                        imgDiv.setAttribute('data-image', file.thumbnailLink);
-                        imgDiv.title = file.name;
-                        gallery.appendChild(imgDiv);
-                        
-                        imgDiv.addEventListener('click', function() {
-                            const previewImage = document.getElementById('preview-image');
-                            previewImage.src = file.thumbnailLink;
-                            previewImage.alt = file.name;
-                        });
-                    });
-                }
-            });
-        }
+        gapi.client.setApiKey(apiKey);
+        gapi.auth2.init({
+          client_id: clientId,
+          scope: scopes
+        });
 
-        // Initialize the API on document load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadClient();
+        gapi.auth2.getAuthInstance().signIn();
+
+        gapi.client.load('drive', 'v3').then(() => {
+          gapi.client.drive.files.list({
+            q: "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents", // Replace with your folder ID
+            fields: 'files(id, name, webViewLink)'
+          }).then(response => {
+            const files = response.result.files;
+            files.forEach(file => {
+              const webViewLink = file.webViewLink;
+              const fileId = file.id;
+              const fileName = file.name;
+
+              const thumbnailDiv = document.createElement('div');
+              thumbnailDiv.classList.add('inner-container');
+              thumbnailDiv.style.backgroundImage = `url(${webViewLink})`;
+              thumbnailDiv.setAttribute('data-image', webViewLink);
+              thumbnailDiv.setAttribute('data-file-id', fileId);
+              thumbnailDiv.setAttribute('title', fileName);
+
+              thumbnailDiv.addEventListener('click', () => {
+                // Display the full-size image when clicked
+                const previewImage = document.getElementById('preview-image');
+                previewImage.src = webViewLink;
+                previewImage.alt = fileName;
+              });
+
+              document.getElementById('gallery-container').appendChild(thumbnailDiv);
+            });
+          });
         });
     </script>
 
