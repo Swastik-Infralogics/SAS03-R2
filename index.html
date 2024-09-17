@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta Tags and Title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SAS03-NHAI Standalone Project Information</title>
     <link rel="icon" href="Swastik S.png" type="image/x-icon">
+
+    <!-- Fonts and Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         /* Full-page background video */
@@ -171,50 +174,71 @@
     <!-- Logo -->
     <img src="Swastik S.png" alt="Swastik Logo" class="logo">
 
+    <!-- Load the API client and auth2 library -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="handleClientLoad()"></script>
+
     <!-- JavaScript -->
-    <script src="https://apis.google.com/js/api.js?key=YOUR_API_KEY"></script>
     <script>
         const clientId = '762399051300-ok3rcfci2904o2t87qip11evkce89dhb.apps.googleusercontent.com';
         const apiKey = 'AIzaSyAfExdKOvGvadFP4x6Wxcx06cGR2UJliaY';
         const scopes = 'https://www.googleapis.com/auth/drive.readonly';
+        const discoveryDocs = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 
-        gapi.client.setApiKey(apiKey);
-        gapi.auth2.init({
-          client_id: clientId,
-          scope: scopes
-        });
+        function handleClientLoad() {
+            gapi.load('client:auth2', initClient);
+        }
 
-        gapi.auth2.getAuthInstance().signIn();
-
-        gapi.client.load('drive', 'v3').then(() => {
-          gapi.client.drive.files.list({
-            q: "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents", // Replace with your folder ID
-            fields: 'files(id, name, webViewLink)'
-          }).then(response => {
-            const files = response.result.files;
-            files.forEach(file => {
-              const webViewLink = file.webViewLink;
-              const fileId = file.id;
-              const fileName = file.name;
-
-              const thumbnailDiv = document.createElement('div');
-              thumbnailDiv.classList.add('inner-container');
-              thumbnailDiv.style.backgroundImage = `url(${webViewLink})`;
-              thumbnailDiv.setAttribute('data-image', webViewLink);
-              thumbnailDiv.setAttribute('data-file-id', fileId);
-              thumbnailDiv.setAttribute('title', fileName);
-
-              thumbnailDiv.addEventListener('click', () => {
-                // Display the full-size image when clicked
-                const previewImage = document.getElementById('preview-image');
-                previewImage.src = webViewLink;
-                previewImage.alt = fileName;
-              });
-
-              document.getElementById('gallery-container').appendChild(thumbnailDiv);
+        function initClient() {
+            gapi.client.init({
+                apiKey: apiKey,
+                clientId: clientId,
+                discoveryDocs: discoveryDocs,
+                scope: scopes
+            }).then(function () {
+                // Sign in the user upon initialization
+                gapi.auth2.getAuthInstance().signIn().then(function() {
+                    loadDriveFiles();
+                });
+            }, function(error) {
+                console.error('Error initializing Google API client', error);
             });
-          });
-        });
+        }
+
+        function loadDriveFiles() {
+            gapi.client.drive.files.list({
+                q: "'16krYsVMK38hKvUY1XjC8P3_c5ubauFCI' in parents and mimeType contains 'image/'",
+                fields: 'files(id, name)'
+            }).then(function(response) {
+                const files = response.result.files;
+                if (files && files.length > 0) {
+                    files.forEach(file => {
+                        const fileId = file.id;
+                        const fileName = file.name;
+                        const imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+                        const thumbnailDiv = document.createElement('div');
+                        thumbnailDiv.classList.add('inner-container');
+                        thumbnailDiv.style.backgroundImage = `url(${imageUrl})`;
+                        thumbnailDiv.setAttribute('data-image', imageUrl);
+                        thumbnailDiv.setAttribute('data-file-id', fileId);
+                        thumbnailDiv.setAttribute('title', fileName);
+
+                        thumbnailDiv.addEventListener('click', () => {
+                            // Display the full-size image when clicked
+                            const previewImage = document.getElementById('preview-image');
+                            previewImage.src = imageUrl;
+                            previewImage.alt = fileName;
+                        });
+
+                        document.getElementById('gallery-container').appendChild(thumbnailDiv);
+                    });
+                } else {
+                    console.log('No files found.');
+                }
+            }, function(error) {
+                console.error('Error loading Drive files', error);
+            });
+        }
     </script>
 
 </body>
