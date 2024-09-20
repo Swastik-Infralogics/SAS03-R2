@@ -222,7 +222,7 @@
   <img src="Swastik S.png" alt="Swastik Logo" class="logo">
 
   <script>
-    let images = []; // Global array to store image URLs
+    let images = []; // Global array to store image objects
     let currentIndex = -1; // Current selected image index
     let zoomLevel = 1; // Initial zoom level
     let translateX = 0; // Initial translation X
@@ -466,6 +466,13 @@
 
       // Add 'selected' class to the clicked thumbnail
       selectedThumbnail.classList.add('selected');
+
+      // Scroll the selected thumbnail into view smoothly
+      selectedThumbnail.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest'
+      });
     }
 
     /**
@@ -480,6 +487,13 @@
 
       if (currentIndex >= 0 && currentIndex < allThumbnails.length) {
         allThumbnails[currentIndex].classList.add('selected');
+
+        // Scroll the selected thumbnail into view smoothly
+        allThumbnails[currentIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest'
+        });
       }
     }
 
