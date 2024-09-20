@@ -59,7 +59,7 @@
 
     .gallery-section {
       width: 50%;
-      overflow-y: auto;
+      overflow-y: auto; /* Allows vertical scrolling */
       padding: 20px;
       box-sizing: border-box;
     }
@@ -231,9 +231,11 @@
     let startX = 0; // Starting X position for dragging
     let startY = 0; // Starting Y position for dragging
 
+    let columns = 1; // Number of columns in the thumbnail grid
+
     document.addEventListener('DOMContentLoaded', function () {
       listImages();
-      document.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('resize', updateColumns); // Recalculate columns on resize
     });
 
     async function listImages() {
@@ -285,6 +287,16 @@
           });
         });
 
+        // Determine the number of columns after thumbnails are loaded
+        updateColumns();
+
+        // Optional: Display the first image by default
+        if (images.length > 0) {
+          currentIndex = 0;
+          displayImage(currentIndex);
+          highlightSelectedThumbnail(document.querySelector('.inner-container'));
+        }
+
       } catch (error) {
         console.error('Error fetching image list:', error);
         alert('Failed to load images. Please try again later.');
@@ -323,6 +335,30 @@
             updateThumbnailSelection();
           }
           break;
+        case 'ArrowUp':
+          event.preventDefault();
+          if (currentIndex - columns >= 0) {
+            currentIndex -= columns;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          } else if (currentIndex > 0) {
+            currentIndex = 0;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          }
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          if (currentIndex + columns < images.length) {
+            currentIndex += columns;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          } else if (currentIndex < images.length - 1) {
+            currentIndex = images.length - 1;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          }
+          break;
         case '+':
         case '=': // For cases where '+' requires shift
           event.preventDefault();
@@ -335,6 +371,34 @@
         default:
           break;
       }
+    }
+
+    /**
+     * Determines and updates the number of columns based on the current layout.
+     */
+    function updateColumns() {
+      const thumbnails = document.querySelectorAll('.inner-container');
+      if (thumbnails.length === 0) {
+        columns = 1;
+        return;
+      }
+
+      const firstThumbnail = thumbnails[0];
+      const firstRect = firstThumbnail.getBoundingClientRect();
+      let columnCount = 1;
+
+      for (let i = 1; i < thumbnails.length; i++) {
+        const currentRect = thumbnails[i].getBoundingClientRect();
+        if (Math.abs(currentRect.top - firstRect.top) < 5) { // Allowing a small margin
+          columnCount++;
+        } else {
+          break;
+        }
+      }
+
+      columns = columnCount;
+      // Optionally, you can log the number of columns for debugging
+      // console.log(`Number of columns: ${columns}`);
     }
 
     function zoomIn() {
@@ -497,6 +561,8 @@
       }
     }
 
+    // Add keydown event listener
+    document.addEventListener('keydown', handleKeyDown);
   </script>
 
 </body>
