@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <!-- Meta and title -->
@@ -97,11 +97,17 @@
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition for box-shadow */
     }
 
     .inner-container:hover {
       transform: scale(1.05);
+    }
+
+    /* New CSS class for selected thumbnail */
+    .inner-container.selected {
+      box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.8); /* Yellow glow */
+      transform: scale(1.05); /* Maintain the hover scale effect */
     }
 
     .preview-section img {
@@ -275,6 +281,7 @@
           imgDiv.addEventListener('click', function () {
             currentIndex = index;
             displayImage(currentIndex);
+            highlightSelectedThumbnail(this);
           });
         });
 
@@ -305,6 +312,7 @@
           if (currentIndex > 0) {
             currentIndex--;
             displayImage(currentIndex);
+            updateThumbnailSelection();
           }
           break;
         case 'ArrowRight':
@@ -312,6 +320,7 @@
           if (currentIndex < images.length - 1) {
             currentIndex++;
             displayImage(currentIndex);
+            updateThumbnailSelection();
           }
           break;
         case '+':
@@ -442,7 +451,39 @@
     previewImage.addEventListener('dragstart', function(event) {
       event.preventDefault();
     });
+
+    /**
+     * Highlights the selected thumbnail by adding the 'selected' class.
+     * Removes the 'selected' class from all other thumbnails.
+     * @param {HTMLElement} selectedThumbnail - The thumbnail element that was clicked.
+     */
+    function highlightSelectedThumbnail(selectedThumbnail) {
+      // Remove 'selected' class from all thumbnails
+      const allThumbnails = document.querySelectorAll('.inner-container');
+      allThumbnails.forEach(function(thumbnail) {
+        thumbnail.classList.remove('selected');
+      });
+
+      // Add 'selected' class to the clicked thumbnail
+      selectedThumbnail.classList.add('selected');
+    }
+
+    /**
+     * Updates the thumbnail selection based on the currentIndex.
+     * Useful when navigating using arrow keys.
+     */
+    function updateThumbnailSelection() {
+      const allThumbnails = document.querySelectorAll('.inner-container');
+      allThumbnails.forEach(function(thumbnail) {
+        thumbnail.classList.remove('selected');
+      });
+
+      if (currentIndex >= 0 && currentIndex < allThumbnails.length) {
+        allThumbnails[currentIndex].classList.add('selected');
+      }
+    }
+
   </script>
 
 </body>
-</html>
+</html>  
