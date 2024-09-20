@@ -231,6 +231,8 @@
     let startX = 0; // Starting X position for dragging
     let startY = 0; // Starting Y position for dragging
 
+    const columns = 4; // Number of columns in the thumbnail grid
+
     document.addEventListener('DOMContentLoaded', function () {
       listImages();
       document.addEventListener('keydown', handleKeyDown);
@@ -285,6 +287,13 @@
           });
         });
 
+        // Optional: Display the first image by default
+        if (images.length > 0) {
+          currentIndex = 0;
+          displayImage(currentIndex);
+          highlightSelectedThumbnail(document.querySelector('.inner-container'));
+        }
+
       } catch (error) {
         console.error('Error fetching image list:', error);
         alert('Failed to load images. Please try again later.');
@@ -325,11 +334,27 @@
           break;
         case 'ArrowUp':
           event.preventDefault();
-          scrollGallery('up');
+          if (currentIndex - columns >= 0) {
+            currentIndex -= columns;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          } else if (currentIndex > 0) {
+            currentIndex = 0;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          }
           break;
         case 'ArrowDown':
           event.preventDefault();
-          scrollGallery('down');
+          if (currentIndex + columns < images.length) {
+            currentIndex += columns;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          } else if (currentIndex < images.length - 1) {
+            currentIndex = images.length - 1;
+            displayImage(currentIndex);
+            updateThumbnailSelection();
+          }
           break;
         case '+':
         case '=': // For cases where '+' requires shift
