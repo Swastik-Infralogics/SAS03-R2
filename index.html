@@ -1,267 +1,598 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Meta and title -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SAS03-NHAI Standalone Project Information</title>
-  <link rel="icon" href="Swastik S.png" type="image/x-icon">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-  <style>
-    /* Your existing styles remain unchanged */
-    /* Full-page background video */
-    #bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
-      object-fit: cover;
-      filter: brightness(0.5);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SAS03-NHAI Standalone Project Information</title>
+    <link rel="icon" href="Swastik S.png" type="image/x-icon">
+    
+    <!-- Open Graph meta tags for social media sharing -->
+    <meta property="og:title" content="SAS03-NHAI Standalone Project Information">
+    <meta property="og:description" content="Construction of 12 Nos of Standalone safety structures/works at different locations on NH-3 in Maharashtra.">
+    <meta property="og:image" content="https://swastik-infralogics.github.io/SAS03/logo.png"> <!-- URL to your logo image -->
+    <meta property="og:url" content="https://swastik-infralogics.github.io/SAS03/">
+    <meta property="og:type" content="website">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4T3CZHB59L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      position: relative;
-      height: 100vh;
-      overflow: hidden; /* Prevent scrolling */
-    }
+      gtag('config', 'G-4T3CZHB59L');
+    </script>
 
-    .home-button {
-      display: inline-block;
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      padding: 10px 20px;
-      background-color: #6a1b9a;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-      z-index: 10;
-    }
-
-    .home-button:hover {
-      background-color: #4a0e78;
-    }
-
-    .main-container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      position: relative;
-      z-index: 1; 
-    }
-
-    .gallery-section {
-      width: 50%;
-      overflow-y: auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .preview-section {
-      width: 50%; 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .gallery-section h1 {
-      text-align: center;
-      color: #fff;
-      margin-bottom: 20px;
-    }
-
-    .inner-containers {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-    }
-
-    .inner-container {
-      width: 100px;
-      height: 100px;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
-      transition: transform 0.3s ease;
-    }
-
-    .inner-container:hover {
-      transform: scale(1.05);
-    }
-
-    .preview-section img {
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 10px;
-      box-shadow: 0px 2px 10px rgba(0,0,0,0.7);
-      object-fit: contain;
-    }
-
-    .logo {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 2;
-      width: 100px;
-    }
-
-    @media (max-width: 800px) {
-      .main-container {
-        flex-direction: column;
-      }
-
-      .gallery-section, .preview-section {
-        width: 100%;
-        height: 50%;
-      }
-
-      .preview-section img {
-        width: 300px;
-        height:auto;
-      }
-    }
-
-    #progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 9999;
-      display: none; 
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .progress-bar-spinner {
-      border: 16px solid #f3f3f3;
-      border-top: 16px solid #6a1b9a;
-      border-radius: 50%;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
-
-    #progress-bar p {
-      color: #fff;
-      margin-top: 20px;
-      font-size: 1.5em;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-
-  <div id="progress-bar">
-    <div class="progress-bar-spinner"></div>
-    <p>Loading Images...</p>
-  </div>
-
-  <video autoplay muted loop id="bg-video">
-    <source src="Animated Video.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-
-  <a href="https://swastik-infralogics.github.io/SAS03/" class="home-button">Home</a>
-
-  <div class="main-container">
-
-    <div class="gallery-section">
-      <h1>Image Gallery - NHAI Project - SAS03</h1>
-      <div class="inner-containers" id="gallery"></div>
-    </div>
-
-    <div class="preview-section">
-      <img id="preview-image" src="" alt="">
-    </div>
-
-  </div>
-
-  <img src="Swastik S.png" alt="Swastik Logo" class="logo">
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      listImages();
-    });
-
-    async function listImages() {
-      const bucketName = 'swastik_bucket-1'; 
-      const folderName = 'SAS03/'; 
-      const apiUrl = `https://storage.googleapis.com/storage/v1/b/${bucketName}/o?prefix=${encodeURIComponent(folderName)}&fields=items(name,updated)&delimiter=/`;
-
-      document.getElementById('progress-bar').style.display = 'flex';
-
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
+    <style>
+        :root {
+            --primary-color: #6a1b9a;
+            --secondary-color: #4a0e78;
+            --text-color: #333;
+            --background-color: #f4f4f4;
         }
 
-        const data = await response.json();
-        const items = data.items || [];
-        const gallery = document.getElementById('gallery');
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        const images = items.filter((item) => {
-          const extension = item.name.split('.').pop().toLowerCase();
-          return imageExtensions.includes(extension);
-        });
+        header, nav, main, footer {
+            width: 100%;
+        }
 
-        // Sort images by 'updated' timestamp in descending order (newest first)
-        images.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
 
-        gallery.innerHTML = '';
+        .header-img {
+            width: 100%;
+            max-width: 500px;
+            display: block;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000; /* Ensure the navbar stays above other content */
+            text-align: center;
+            background-color: #6a1b9a;
+            padding: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(to bottom, #7b1fa2 0%, #4a148c 100%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            border-bottom: 3px solid #4a148c;
+        }
 
-        images.forEach((item) => {
-          const imageName = item.name;
-          const imageUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(imageName)}`;
+    
+    	/* 3D effect with box-shadow and gradient */
+   	       background: linear-gradient(to bottom, #7b1fa2 0%, #4a148c 100%); /* Gradient for 3D effect */
+    	   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Adds shadow below the navbar for depth */
+    	   border-bottom: 3px solid #4a148c; /* Darker border at the bottom for more 3D depth */
+        }
+        .nav.sticky {
+            position: fixed; /* Fix navigation bar at the top when scrolled */
+            top: 0;
+            width: 100%;
+        }
+        .nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white; /* White Text for Navigation Links */
+            transition: color 0.3s;
+        }
+        .nav a:hover {
+            color: #ccc; /* Lighter purple for hover effect */
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .nav-links {
+            display: flex;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .nav a:hover {
+            background-color: #4a0e78;
+        }
 
-          const imgDiv = document.createElement('div');
-          imgDiv.classList.add('inner-container');
-          const thumbnailUrl = imageUrl;
+        h2, h3 {
+            color: var(--primary-color);
+            margin-top: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
 
-          imgDiv.style.backgroundImage = `url(${thumbnailUrl})`;
-          imgDiv.setAttribute('data-image', imageUrl);
-          imgDiv.title = imageName;
-          gallery.appendChild(imgDiv);
+        .table-container {
+            overflow-x: auto;
+        }
 
-          imgDiv.addEventListener('click', function () {
-            const previewImage = document.getElementById('preview-image');
-            previewImage.src = imageUrl;
-            previewImage.alt = imageName;
-          });
-        });
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-      } catch (error) {
-        console.error('Error fetching image list:', error);
-        alert('Failed to load images. Please try again later.');
-      } finally {
-        document.getElementById('progress-bar').style.display = 'none';
-      }
-    }
-  </script>
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f3f2f8;
+        }
+
+        .scrollable-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #eeebfd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .footer {
+             text-align: center;
+             padding: 5px;
+             background-color: #6a1b9a;
+             color: white;
+             margin-top: 10px;
+             font-size: 15px;
+             line-height: 1;
+        }
+
+        iframe {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Swiper styles */
+        .swiper-container {
+            width: 100%;
+            height: 60vh;
+            margin: 5px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .swiper-button-prev, .swiper-button-next {
+            color: white;
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background-color: var(--primary-color);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav a {
+                padding: 15px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .hamburger {
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                padding: 5px;
+            }
+
+            .hamburger span {
+                background-color: white;
+                height: 3px;
+                width: 25px;
+                margin: 2px 0;
+                display: block;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            h3 {
+                font-size: 20px;
+            }
+
+            .scrollable-content {
+                max-height: 300px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container > * {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .container > *:nth-child(1) { animation-delay: 0.1s; }
+        .container > *:nth-child(2) { animation-delay: 0.2s; }
+        .container > *:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <header>
+        <img class="header-img" src="Picture1.jpg" alt="NHAI Header Image" loading="lazy">
+    </header>
+
+    <nav class="nav" id="navbar">
+        <div class="nav-content">
+            <div class="hamburger" id="hamburger-menu" aria-label="Menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="#">HOME</a>
+                <a href="gallery.html" target="_blank">GALLERY</a>
+                <a href="#projectBackground">PROJECT BACKGROUND</a>
+                <a href="#projectDetails">PROJECT DETAILS</a>
+                <a href="#monthlyProgress">PHYSICAL PROGRESS</a>
+                <a href="#projectVideo">PROJECT VIDEO</a>
+                <a href="#contactDetails">CONTACT</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Name of Work: Construction of 12 Nos of Standalone safety structures/works at different locations on NH-3 in the state of Maharashtra</h2>
+
+        <h3 id="gallery">Gallery</h3>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="P7.jpg" alt="Project Photo 1" loading="lazy"></div>
+                <div class="swiper-slide"><img src="P8.jpg" alt="Project Photo 2" loading="lazy"></div>
+                <div class="swiper-slide"><img src="P10.jpg" alt="Project Photo 3" loading="lazy"></div>
+                <div class="swiper-slide"><img src="P55.jpg" alt="Project Photo 4" loading="lazy"></div>
+                <div class="swiper-slide"><img src="P56.jpg" alt="Project Photo 5" loading="lazy"></div>
+                <div class="swiper-slide"><img src="P57.jpg" alt="Project Photo 6" loading="lazy"></div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+
+        <h3 id="projectBackground">Project Background</h3>
+        <div class="scrollable-content">
+             <p>The Construction of 12 Nos of Standalone Safety Structures/Works is an essential infrastructure project commissioned by the National Highways Authority of India (NHAI). The project focuses on enhancing safety and traffic flow on National Highway 3 (NH-3), which connects key regions in the state of Maharashtra, stretching from Mumbai to Agra, passing through major cities such as Thane, Nashik, Dhule, and Indore. This route plays a pivotal role in facilitating the movement of goods and passengers across the western and northern parts of India.</p>
+
+            <p>The purpose of these standalone structures is to mitigate the risk of accidents and improve overall highway safety through the construction of specific infrastructure, such as grade separators, vehicular underpasses (VUPs), and flyovers. These structures will address traffic congestion, improve access to remote areas, and provide safer crossings for pedestrians and local vehicles.</p>
+
+            <p>This initiative forms part of a broader effort by the Government of India to modernize national highways and ensure that critical road infrastructure aligns with the highest safety standards. Undertaken under the Engineering, Procurement, and Construction (EPC) mode, the project will be completed over two years, with a defect liability period of ten years thereafter, ensuring long-term maintenance and operational safety. This comprehensive approach ensures that both construction quality and long-term upkeep are prioritized.</p>
+
+            <p>The construction covers various standalone structures located at different chainages on NH-3, particularly in regions prone to traffic congestion and frequent accidents. The scope of work includes site preparation, excavation, construction of the new pavement, rehabilitation of existing infrastructure, and drainage systems. Once completed, these structures will significantly improve safety by providing uninterrupted traffic flow, reducing bottlenecks, and eliminating accident-prone zones.</p>
+
+            <p><b>Route Details:</b></p>
+            <p>NH-3 is one of the primary arterial roads connecting Mumbai (Maharashtra) to Agra (Uttar Pradesh). Along the route, it connects major cities and industrial hubs, including Thane, Bhiwandi, Nashik, Malegaon, Dhule, and beyond. This highway also serves as a vital link for trade and commerce, catering to both heavy cargo transportation and passenger vehicles.</p>
+
+            <p>The project primarily targets areas with high traffic density and frequent road intersections, aiming to separate local traffic from through traffic. Structures such as flyovers and vehicular underpasses at key junctions will enhance safety and reduce waiting times, allowing for a smoother, safer transit experience.</p>
+
+            <p><b>Benefits to the Public:</b></p>
+            <p><b>1) Enhanced Road Safety:</b> The construction of grade separators, underpasses, and flyovers will greatly reduce the risk of collisions, especially at intersections and busy crossways. This will also prevent conflicts between local traffic and highway traffic, leading to a significant reduction in road accidents.</p>
+
+            <p><b>2) Reduced Travel Time:</b> The removal of bottlenecks and the separation of high-speed through traffic from local road users will ensure a faster and more seamless travel experience for both commercial vehicles and commuters. This will especially benefit long-haul transportation between Maharashtra and northern India.</p>
+
+            <p><b>3) Economic Growth:</b> By improving the efficiency of NH-3, the project will support economic growth in the regions it traverses. Faster transportation of goods will lower logistics costs and bolster trade in the Mumbai–Agra corridor, benefiting industries, agriculture, and local businesses along the route.</p>
+
+            <p><b>4) Improved Connectivity:</b> The construction of these standalone structures will not only improve highway connectivity but also enhance access to remote villages and towns located near NH-3, which will now benefit from safer, easier access to major cities like Nashik and Dhule.</p>
+
+            <p><b>5) Long-Term Sustainability:</b> With a ten-year defect liability period, the project ensures that the structures remain in optimal condition for years to come, providing a long-term solution to traffic management and road safety.</p>
+
+            <p>The project is aligned with NHAI's larger goal of upgrading critical national highways across the country, ensuring that they are equipped to handle increasing traffic volumes while meeting stringent safety norms. By providing better connectivity, reducing accidents, and improving travel time, this project will significantly enhance the quality of life for daily commuters, local residents, and long-distance travelers alike.</p>
+        
+        </div>
+
+        <h3 id="projectDetails">Project Details</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Description</th>
+                    <th>Information</th>
+                </tr>
+                <tr>
+                    <td>Name of the Project</td>
+                    <td>Construction of 12 Nos of Standalone safety structures/works at different locations on NH-3 in the state of Maharashtra</td>
+                </tr>
+                <tr>
+                    <td>Client</td>
+                    <td>National Highways Authority of India (NHAI)</td>
+                </tr>
+                <tr>
+                    <td>Contractor</td>
+                    <td>M/s. Swastik - TandT JV</td>
+                </tr>
+                <tr>
+                    <td>Name of the Consultant/Authority Engineer</td>
+                    <td>As of now NHAI itself is supervising</td>
+                </tr>
+                <tr>
+                    <td>Date of Commencement</td>
+                    <td>22nd July 2024</td>
+                </tr>
+                <tr>
+                    <td>Stipulated Date of Completion</td>
+                    <td>21st July 2026</td>
+                </tr>
+                <tr>
+                    <td>Duration</td>
+                    <td>2 Years (Construction)</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Locations and Chainages of 12 Nos of Structures</h3>
+        <div class="table-container">
+            <table>
+    <tr>
+        <th>S.No</th>
+        <th>Name of the Location</th>
+        <th>Chainage</th>
+        <th>Google Map Link to Locate Start to End of Structure</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Chalisgaon Junction</td>
+        <td>262+850</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.8793,74.7882&destination=20.8735,74.7769&travelmode=driving" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Arvi</td>
+        <td>279+100</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.7557,74.7215&destination=20.7476,74.7133&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Chalisgaon Phata</td>
+        <td>305+000</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.5838,74.5866&destination=20.578,74.5718&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Sawadgaon</td>
+        <td>310+660</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.5451,74.5626&destination=20.5373,74.5521&travelmode=driving" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Tehre Soygaon Junction</td>
+        <td>318+060</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.5318,74.5006&destination=20.5284,74.4901&travelmode=driving" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Chandwad</td>
+        <td>356+780</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.333,74.2399&destination=20.329,74.227&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>7.a</td>
+        <td>10th Mile Junction</td>
+        <td>401+725</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.0756,73.9092&destination=20.0668,73.8962&travelmode=driving" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>7.b</td>
+        <td>Jaulke Dindori</td>
+        <td>403+637</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=20.0668,73.8962&destination=20.0564,73.8852&travelmode=driving" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>Indira Nagar</td>
+        <td>418+850</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=19.9832,73.7825&destination=19.9782,73.7783&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td>Rane Nagar</td>
+        <td>420+860</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=19.9679,73.7691&destination=19.964,73.7663&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td>Ambebahula</td>
+        <td>429+120</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=19.922,73.7149&destination=19.9102,73.7048&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>11</td>
+        <td>Lahe Junction</td>
+        <td>497+586</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=19.5478,73.3618&destination=19.5433,73.3509&travelmode=driving" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td>Khativali</td>
+        <td>517+525</td>
+        <td><a href="https://www.google.com/maps/dir/?api=1&origin=19.416,73.2766&destination=19.414,73.2687&travelmode=walking" target="_blank">Locate on Google Maps</a></td>
+    </tr>
+</table>
+</div>
+
+    <h3 id="monthlyProgress">Monthly Physical Progress</h3>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Description</th>
+                <th>Up-to Previous Month (Up to 31/07/2024)</th>
+                <th>Current Month (For Aug-2024)</th>
+                <th>Up-to Date (%) (Up to 31/08/2024)</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Physical Progress</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td>0%</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3 id="weeklyProgress">Weekly Physical Progress - September 2024</h3>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Sl. No.</th>
+                <th>Description</th>
+                <th>Week - 1</th>
+                <th>Week - 2</th>
+                <th>Week - 3</th>
+                <th>Week - 4</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Physical Progress</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td>0%</td>
+                <td>0%</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3 id="projectVideo">Project Video</h3>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/aP_LVR9S_W0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+    <h3 id="contactDetails">Contact Details</h3>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Sl.No</th>
+                <th>Name of Contact Person</th>
+                <th>Designation</th>
+                <th>Contact Number</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Mr. Venkata Sastry</td>
+                <td>Sr. Project Manager</td>
+                <td>+91 96035 06295</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Mr. Nitin Sharma</td>
+                <td>Public Relation Officer</td>
+                <td>+91 88609 12479</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Mr. Gaurav Patil</td>
+                <td>Co-Ordinator</td>
+                <td>+91 86910 17728</td>
+            </tr>
+        </table>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>Disclaimer: The information provided on this site is for general informational purposes only and is subject to change.</p>
+    <p>Site is maintained as part of contract terms by M/s. Swastik Infralogics Pvt Ltd &#174;. All rights reserved.</p>
+</footer>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    var swiper = new Swiper('.swiper-container', {
+        spaceBetween: 30,
+        centeredSlides: true,
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        loop: true,
+    });
+
+    const hamburger = document.getElementById('hamburger-menu');
+    const navLinks = document.getElementById('nav-links');
+
+    hamburger.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
+        hamburger.setAttribute('aria-expanded', !expanded);
+    });
+
+    navLinks.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') {
+            navLinks.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', false);
+        }
+    }); // Added missing closing brace and parenthesis here
+
+    // Disable right-click context menu on the entire page
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
+}); // Added missing closing brace and parenthesis for DOMContentLoaded
+       
+</script>
 
 </body>
 </html>
