@@ -59,7 +59,7 @@
 
     .gallery-section {
       width: 50%;
-      overflow-y: auto;
+      overflow-y: auto; /* Allows vertical scrolling */
       padding: 20px;
       box-sizing: border-box;
     }
@@ -323,6 +323,14 @@
             updateThumbnailSelection();
           }
           break;
+        case 'ArrowUp':
+          event.preventDefault();
+          scrollGallery('up');
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          scrollGallery('down');
+          break;
         case '+':
         case '=': // For cases where '+' requires shift
           event.preventDefault();
@@ -334,6 +342,27 @@
           break;
         default:
           break;
+      }
+    }
+
+    /**
+     * Scrolls the gallery container up or down by a fixed amount.
+     * @param {string} direction - 'up' or 'down' indicating the scroll direction.
+     */
+    function scrollGallery(direction) {
+      const gallery = document.getElementById('gallery');
+      const scrollAmount = 100; // Adjust scroll amount as needed
+
+      if (direction === 'up') {
+        gallery.scrollBy({
+          top: -scrollAmount,
+          behavior: 'smooth'
+        });
+      } else if (direction === 'down') {
+        gallery.scrollBy({
+          top: scrollAmount,
+          behavior: 'smooth'
+        });
       }
     }
 
