@@ -231,15 +231,13 @@
     let startX = 0; // Starting X position for dragging
     let startY = 0; // Starting Y position for dragging
 
-    // Make bucketName a global variable
-    const bucketName = 'swastik_bucket-1'; 
-
     document.addEventListener('DOMContentLoaded', function () {
       listImages();
       document.addEventListener('keydown', handleKeyDown);
     });
 
     async function listImages() {
+      const bucketName = 'swastik_bucket-1'; 
       const folderName = 'SAS03/'; 
       const apiUrl = `https://storage.googleapis.com/storage/v1/b/${bucketName}/o?prefix=${encodeURIComponent(folderName)}&fields=items(name,updated)&delimiter=/`;
 
@@ -287,13 +285,6 @@
           });
         });
 
-        // Optional: Display the first image by default
-        if (images.length > 0) {
-          currentIndex = 0;
-          displayImage(currentIndex);
-          highlightSelectedThumbnail(document.querySelector('.inner-container'));
-        }
-
       } catch (error) {
         console.error('Error fetching image list:', error);
         alert('Failed to load images. Please try again later.');
@@ -305,7 +296,7 @@
     function displayImage(index) {
       if (index >= 0 && index < images.length) {
         const previewImage = document.getElementById('preview-image');
-        const imageUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(images[index].name)}`;
+        const imageUrl = `https://storage.googleapis.com/swastik_bucket-1/${encodeURIComponent(images[index].name)}`;
         previewImage.src = imageUrl;
         previewImage.alt = images[index].name;
         resetZoomAndPan();
@@ -359,23 +350,20 @@
      * @param {string} direction - 'up' or 'down' indicating the scroll direction.
      */
     function scrollGallery(direction) {
-      // **Modified Code Start**
-      // Target the gallery-section instead of the gallery div
-      const gallerySection = document.querySelector('.gallery-section');
+      const gallery = document.getElementById('gallery');
       const scrollAmount = 100; // Adjust scroll amount as needed
 
       if (direction === 'up') {
-        gallerySection.scrollBy({
+        gallery.scrollBy({
           top: -scrollAmount,
           behavior: 'smooth'
         });
       } else if (direction === 'down') {
-        gallerySection.scrollBy({
+        gallery.scrollBy({
           top: scrollAmount,
           behavior: 'smooth'
         });
       }
-      // **Modified Code End**
     }
 
     function zoomIn() {
@@ -541,4 +529,4 @@
   </script>
 
 </body>
-</html>
+</html>  
