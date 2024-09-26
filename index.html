@@ -191,7 +191,7 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Slideshow button and speed input styles */
+    /* Slideshow button and controls */
     #slideshow-controls {
       position: fixed;
       top: 20px;
@@ -215,6 +215,20 @@
       background-color: #4a0e78;
     }
 
+    #manual-button {
+      padding: 10px 20px;
+      background-color: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    #manual-button:hover {
+      background-color: #4a0e78;
+    }
+
     #speed-label {
       margin-right: 5px;
       color: #fff;
@@ -227,17 +241,62 @@
       border: none;
     }
 
-    /* Preview thumbnail styles */
-    .preview-thumbnail {
-      position: absolute;
+    /* Slideshow navigation buttons */
+    #slideshow-nav {
+      position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 100px;
-      height: auto;
-      border: 2px solid #fff;
-      border-radius: 5px;
-      box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
-      display: none; /* Hide by default */
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-button {
+      padding: 10px 15px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      margin: 0 5px;
+      font-size: 18px;
+    }
+
+    .nav-button:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    /* Fullscreen slideshow styles */
+    .slideshow-fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      z-index: 9998;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slideshow-image-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slideshow-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    /* For displaying two portrait images side by side */
+    .slideshow-image-container.two-images .slideshow-image {
+      width: 50%;
     }
   </style>
 </head>
@@ -257,7 +316,8 @@
 
   <!-- Slideshow Controls -->
   <div id="slideshow-controls">
-    <button id="slideshow-button">Start Slideshow</button>
+    <button id="slideshow-button">Auto Slideshow</button>
+    <button id="manual-button">Manual Slideshow</button>
     <label for="speed-input" id="speed-label">Speed (s):</label>
     <input type="number" id="speed-input" min="1" value="3">
   </div>
@@ -271,12 +331,23 @@
 
     <div class="preview-section">
       <img id="preview-image" src="" alt="">
-      <img id="next-image-preview" src="" alt="" class="preview-thumbnail">
     </div>
 
   </div>
 
   <img src="Swastik S.png" alt="Swastik Logo" class="logo">
+
+  <!-- Slideshow Fullscreen Container -->
+  <div id="slideshow-fullscreen" style="display:none;">
+    <div id="slideshow-nav">
+      <button id="prev-button" class="nav-button">&#9664;</button>
+      <button id="pause-button" class="nav-button">&#10074;&#10074;</button>
+      <button id="next-button" class="nav-button">&#9654;</button>
+    </div>
+    <div id="slideshow-image-container" class="slideshow-image-container">
+      <!-- Images will be injected here -->
+    </div>
+  </div>
 
   <script>
     let images = []; // Global array to store image objects
@@ -291,18 +362,39 @@
     let columns = 1; // Number of columns in the thumbnail grid
 
     let slideshowInterval = null; // Slideshow interval ID
+    let isPaused = false; // Pause state for slideshow
+    let isManual = false; // Manual slideshow mode
 
     document.addEventListener('DOMContentLoaded', function () {
       listImages();
       window.addEventListener('resize', updateColumns); // Recalculate columns on resize
 
-      // Slideshow button event listener
+      // Slideshow button event listeners
       document.getElementById('slideshow-button').addEventListener('click', function() {
+        isManual = false;
         if (slideshowInterval === null) {
           startSlideshow();
-        } else {
-          stopSlideshow();
         }
+      });
+
+      document.getElementById('manual-button').addEventListener('click', function() {
+        isManual = true;
+        if (slideshowInterval === null) {
+          startSlideshow();
+        }
+      });
+
+      // Slideshow navigation buttons
+      document.getElementById('prev-button').addEventListener('click', function() {
+        showPreviousSlide();
+      });
+
+      document.getElementById('next-button').addEventListener('click', function() {
+        showNextSlide();
+      });
+
+      document.getElementById('pause-button').addEventListener('click', function() {
+        togglePauseSlideshow();
       });
     });
 
@@ -334,7 +426,9 @@
 
         gallery.innerHTML = '';
 
-        images.forEach((item, index) => {
+        // Load images and get their aspect ratios
+        for (let i = 0; i < images.length; i++) {
+          const item = images[i];
           const imageName = item.name;
           const imageUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(imageName)}`;
 
@@ -344,17 +438,31 @@
 
           imgDiv.style.backgroundImage = `url(${thumbnailUrl})`;
           imgDiv.setAttribute('data-image', imageUrl);
-          imgDiv.setAttribute('data-index', index); // Store index
+          imgDiv.setAttribute('data-index', i); // Store index
           imgDiv.title = imageName;
           gallery.appendChild(imgDiv);
 
           imgDiv.addEventListener('click', function () {
-            currentIndex = index;
+            currentIndex = i;
             displayImage(currentIndex);
             highlightSelectedThumbnail(this);
             stopSlideshow(); // Stop slideshow when a thumbnail is clicked
           });
-        });
+
+          // Load image to get aspect ratio
+          const img = new Image();
+          img.src = imageUrl;
+          await new Promise((resolve) => {
+            img.onload = () => {
+              images[i].aspectRatio = img.naturalWidth / img.naturalHeight;
+              resolve();
+            };
+            img.onerror = () => {
+              images[i].aspectRatio = 1; // Default aspect ratio
+              resolve();
+            };
+          });
+        }
 
         // Determine the number of columns after thumbnails are loaded
         updateColumns();
@@ -394,7 +502,6 @@
             currentIndex--;
             displayImage(currentIndex);
             updateThumbnailSelection();
-            updatePreviewImage();
           }
           break;
         case 'ArrowRight':
@@ -403,7 +510,6 @@
             currentIndex++;
             displayImage(currentIndex);
             updateThumbnailSelection();
-            updatePreviewImage();
           }
           break;
         case 'ArrowUp':
@@ -412,12 +518,10 @@
             currentIndex -= columns;
             displayImage(currentIndex);
             updateThumbnailSelection();
-            updatePreviewImage();
           } else if (currentIndex > 0) {
             currentIndex = 0;
             displayImage(currentIndex);
             updateThumbnailSelection();
-            updatePreviewImage();
           }
           break;
         case 'ArrowDown':
@@ -426,12 +530,10 @@
             currentIndex += columns;
             displayImage(currentIndex);
             updateThumbnailSelection();
-            updatePreviewImage();
           } else if (currentIndex < images.length - 1) {
             currentIndex = images.length - 1;
             displayImage(currentIndex);
             updateThumbnailSelection();
-            updatePreviewImage();
           }
           break;
         case '+':
@@ -639,76 +741,123 @@
 
     // Slideshow functions
     function startSlideshow() {
-      if (slideshowInterval === null) {
-        const speedInput = document.getElementById('speed-input');
-        let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
+      const speedInput = document.getElementById('speed-input');
+      let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
+
+      document.getElementById('slideshow-button').disabled = true;
+      document.getElementById('manual-button').disabled = true;
+
+      // Hide other elements
+      document.querySelector('.gallery-section').style.display = 'none';
+      document.querySelector('.preview-section').style.display = 'none';
+      document.getElementById('slideshow-fullscreen').style.display = 'flex';
+
+      // Start slideshow
+      if (!isManual) {
         slideshowInterval = setInterval(function() {
-          currentIndex = (currentIndex + 1) % images.length;
-          displayImage(currentIndex);
-          updateThumbnailSelection();
-          updatePreviewImage();
+          if (!isPaused) {
+            showNextSlide();
+          }
         }, speed);
-        document.getElementById('slideshow-button').textContent = 'Stop Slideshow';
-
-        // Request full screen
-        openFullscreen();
-
-        // Hide gallery section to show full screen image
-        document.querySelector('.gallery-section').style.display = 'none';
-
-        // Show preview thumbnail
-        updatePreviewImage();
       }
+      showCurrentSlide();
     }
 
     function stopSlideshow() {
       if (slideshowInterval !== null) {
         clearInterval(slideshowInterval);
         slideshowInterval = null;
-        document.getElementById('slideshow-button').textContent = 'Start Slideshow';
-
-        // Exit full screen
-        closeFullscreen();
-
-        // Show gallery section again
-        document.querySelector('.gallery-section').style.display = 'block';
-
-        // Hide preview thumbnail
-        document.getElementById('next-image-preview').style.display = 'none';
       }
+      isPaused = false;
+
+      document.getElementById('slideshow-button').disabled = false;
+      document.getElementById('manual-button').disabled = false;
+
+      // Show other elements
+      document.querySelector('.gallery-section').style.display = 'block';
+      document.querySelector('.preview-section').style.display = 'flex';
+      document.getElementById('slideshow-fullscreen').style.display = 'none';
     }
 
-    /* View in fullscreen */
-    function openFullscreen() {
-      const elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) { /* IE11 */
-        elem.msRequestFullscreen();
+    function togglePauseSlideshow() {
+      isPaused = !isPaused;
+      document.getElementById('pause-button').innerHTML = isPaused ? '&#9654;' : '&#10074;&#10074;';
+    }
+
+    function showCurrentSlide() {
+      const container = document.getElementById('slideshow-image-container');
+      container.innerHTML = ''; // Clear previous images
+
+      // Decide how many images to show based on orientation
+      let slides = [];
+      let indexIncrement = 1;
+
+      const currentImage = images[currentIndex];
+      if (isPortrait(currentImage)) {
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < images.length && isPortrait(images[nextIndex])) {
+          // Show two portrait images side by side
+          slides.push(currentImage, images[nextIndex]);
+          indexIncrement = 2;
+        } else {
+          slides.push(currentImage);
+        }
+      } else {
+        slides.push(currentImage);
       }
-    }
 
-    /* Close fullscreen */
-    function closeFullscreen() {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) { /* Safari */
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { /* IE11 */
-        document.msExitFullscreen();
+      // Create image elements
+      slides.forEach((image) => {
+        const imgElement = document.createElement('img');
+        imgElement.src = `https://storage.googleapis.com/swastik_bucket-1/${encodeURIComponent(image.name)}`;
+        imgElement.classList.add('slideshow-image');
+        container.appendChild(imgElement);
+      });
+
+      // Adjust container class based on number of images
+      if (slides.length === 2) {
+        container.classList.add('two-images');
+      } else {
+        container.classList.remove('two-images');
       }
+
+      // Update currentIndex for next slide
+      currentIndex = (currentIndex + indexIncrement) % images.length;
     }
 
-    // Update preview image
-    function updatePreviewImage() {
-      const nextIndex = (currentIndex + 1) % images.length;
-      const previewImage = document.getElementById('next-image-preview');
-      const imageUrl = `https://storage.googleapis.com/swastik_bucket-1/${encodeURIComponent(images[nextIndex].name)}`;
-      previewImage.src = imageUrl;
-      previewImage.style.display = 'block';
+    function showNextSlide() {
+      showCurrentSlide();
     }
+
+    function showPreviousSlide() {
+      let indexDecrement = 1;
+      if (currentIndex > 0) {
+        if (isPortrait(images[currentIndex - 1]) && isPortrait(images[currentIndex - 2])) {
+          indexDecrement = 2;
+        }
+      } else {
+        currentIndex = images.length;
+      }
+      currentIndex = (currentIndex - indexDecrement + images.length) % images.length;
+      showCurrentSlide();
+    }
+
+    function isPortrait(image) {
+      return image.aspectRatio < 1;
+    }
+
+    // Close slideshow when clicking outside images
+    document.getElementById('slideshow-fullscreen').addEventListener('click', function(event) {
+      if (event.target.id === 'slideshow-fullscreen') {
+        stopSlideshow();
+      }
+    });
+
+    // Prevent navigation buttons from closing the slideshow
+    document.getElementById('slideshow-nav').addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
+
   </script>
 
 </body>
