@@ -316,11 +316,12 @@
 
   <!-- Slideshow Controls -->
   <div id="slideshow-controls">
-    <button id="slideshow-button">Auto Slideshow</button>
-    <button id="manual-button">Manual Slideshow</button>
-    <label for="speed-input" id="speed-label">Speed (s):</label>
-    <input type="number" id="speed-input" min="1" value="3">
-  </div>
+  <button id="slideshow-button">Auto Slideshow</button>
+  <button id="manual-button">Manual Slideshow</button>
+  <label for="speed-input" id="speed-label">Speed (s):</label>
+  <input type="number" id="speed-input" min="1" value="3">
+</div>
+
 
   <div class="main-container">
 
@@ -339,13 +340,13 @@
 
   <!-- Slideshow Fullscreen Container -->
   <div id="slideshow-fullscreen" style="display:none;">
-    <div id="slideshow-nav">
-      <button id="prev-button" class="nav-button">&#9664;</button>
-      <button id="pause-button" class="nav-button">&#10074;&#10074;</button>
-      <button id="next-button" class="nav-button">&#9654;</button>
-      <button id="exit-button" class="nav-button">Exit</button>
-    </div>
-    <div id="slideshow-image-container">
+  <div id="slideshow-nav">
+    <button id="prev-button" class="nav-button">&#9664;</button>
+    <button id="pause-button" class="nav-button">&#10074;&#10074;</button>
+    <button id="next-button" class="nav-button">&#9654;</button>
+    <button id="exit-button" class="nav-button">Exit</button>
+  </div>
+  <div id="slideshow-image-container">
       <!-- Images will be injected here -->
     </div>
   </div>
@@ -750,179 +751,217 @@
     document.addEventListener('keydown', handleKeyDown);
 
     // Slideshow functions
-    function startSlideshow() {
-      const speedInput = document.getElementById('speed-input');
-      let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
+function startSlideshow() {
+  const speedInput = document.getElementById('speed-input');
+  let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
 
-      isPaused = false;
-      document.getElementById('pause-button').innerHTML = '&#10074;&#10074;';
+  isPaused = false;
+  document.getElementById('pause-button').innerHTML = '&#10074;&#10074;';
 
-      document.getElementById('slideshow-button').disabled = true;
-      document.getElementById('manual-button').disabled = true;
+  document.getElementById('slideshow-button').disabled = true;
+  document.getElementById('manual-button').disabled = true;
 
-      // Hide other elements
-      document.querySelector('.gallery-section').style.display = 'none';
-      document.querySelector('.preview-section').style.display = 'none';
-      document.getElementById('slideshow-fullscreen').style.display = 'flex';
+  // Hide other elements
+  document.querySelector('.gallery-section').style.display = 'none';
+  document.querySelector('.preview-section').style.display = 'none';
+  document.getElementById('slideshow-fullscreen').style.display = 'flex';
 
-      // Add keydown event listener for slideshow navigation
-      document.addEventListener('keydown', handleSlideshowKeydown);
+  // Hide slideshow controls
+  document.getElementById('slideshow-controls').style.display = 'none';
 
-      // Ensure currentIndex is valid
-      if (currentIndex < 0 || currentIndex >= images.length) {
-        currentIndex = 0;
-      }
+  // Add keydown event listener for slideshow navigation and exit
+  document.addEventListener('keydown', handleSlideshowKeydown);
 
-      showCurrentSlide();
+  // Ensure currentIndex is valid
+  if (currentIndex < 0 || currentIndex >= images.length) {
+    currentIndex = 0;
+  }
 
-      if (!isManual) {
-        slideshowInterval = setInterval(function() {
-          if (!isPaused) {
-            showNextSlide();
-          }
-        }, speed);
-      }
-    }
+  showCurrentSlide();
 
-    function stopSlideshow() {
-      if (slideshowInterval !== null) {
-        clearInterval(slideshowInterval);
-        slideshowInterval = null;
-      }
-      isPaused = false;
-
-      document.getElementById('slideshow-button').disabled = false;
-      document.getElementById('manual-button').disabled = false;
-
-      // Show other elements
-      document.querySelector('.gallery-section').style.display = 'block';
-      document.querySelector('.preview-section').style.display = 'flex';
-      document.getElementById('slideshow-fullscreen').style.display = 'none';
-
-      // Remove keydown event listener for slideshow navigation
-      document.removeEventListener('keydown', handleSlideshowKeydown);
-    }
-
-    function togglePauseSlideshow() {
-      isPaused = !isPaused;
-      document.getElementById('pause-button').innerHTML = isPaused ? '&#9654;' : '&#10074;&#10074;';
-    }
-
-    function showCurrentSlide() {
-      const container = document.getElementById('slideshow-image-container');
-      container.innerHTML = ''; // Clear previous images
-
-      // Decide how many images to show based on orientation
-      let slides = [];
-      let indexIncrement = 1;
-
-      const currentImage = images[currentIndex];
-      slides.push(currentImage);
-
-      const nextIndex = (currentIndex + 1) % images.length;
-
-      if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
-        // Show two portrait images side by side
-        slides.push(images[nextIndex]);
-        if (!isManual) indexIncrement = 2;
-      }
-
-      // Create image elements
-      slides.forEach((image) => {
-        const imgElement = document.createElement('img');
-        imgElement.src = `https://storage.googleapis.com/swastik_bucket-1/${encodeURIComponent(image.name)}`;
-        imgElement.classList.add('slideshow-image');
-        container.appendChild(imgElement);
-      });
-
-      // Adjust container class based on number of images
-      if (slides.length === 2) {
-        container.classList.add('two-images');
-      } else {
-        container.classList.remove('two-images');
-      }
-
-      // For manual mode, do not auto-increment currentIndex
-      if (!isManual) {
-        // Update currentIndex for next slide
-        currentIndex = (currentIndex + indexIncrement) % images.length;
-      }
-    }
-
-    function showNextSlide() {
-      if (isManual) {
-        // Increment currentIndex appropriately
-        let indexIncrement = 1;
-        const currentImage = images[currentIndex];
-        const nextIndex = (currentIndex + 1) % images.length;
-
-        if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
-          indexIncrement = 2;
-        }
-
-        currentIndex = (currentIndex + indexIncrement) % images.length;
-      }
-      showCurrentSlide();
-    }
-
-    function showPreviousSlide() {
-      let indexDecrement = 1;
-      if (currentIndex > 0) {
-        const prevIndex = (currentIndex - 1 + images.length) % images.length;
-        const prevPrevIndex = (currentIndex - 2 + images.length) % images.length;
-
-        if (isPortrait(images[prevIndex]) && isPortrait(images[prevPrevIndex])) {
-          indexDecrement = 2;
-        }
-      } else {
-        currentIndex = images.length;
-      }
-      currentIndex = (currentIndex - indexDecrement + images.length) % images.length;
-      showCurrentSlide();
-    }
-
-    function isPortrait(image) {
-      return image.aspectRatio < 1;
-    }
-
-    // Handle keydown events during slideshow
-    function handleSlideshowKeydown(event) {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        showPreviousSlide();
-        resetSlideshowInterval();
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
+  if (!isManual) {
+    slideshowInterval = setInterval(function () {
+      if (!isPaused) {
         showNextSlide();
-        resetSlideshowInterval();
       }
+    }, speed);
+  }
+}
+
+function stopSlideshow() {
+  if (slideshowInterval !== null) {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+  }
+  isPaused = false;
+
+  document.getElementById('slideshow-button').disabled = false;
+  document.getElementById('manual-button').disabled = false;
+
+  // Show other elements
+  document.querySelector('.gallery-section').style.display = 'block';
+  document.querySelector('.preview-section').style.display = 'flex';
+  document.getElementById('slideshow-fullscreen').style.display = 'none';
+
+  // Show slideshow controls
+  document.getElementById('slideshow-controls').style.display = 'flex';
+
+  // Remove keydown event listener for slideshow navigation and exit
+  document.removeEventListener('keydown', handleSlideshowKeydown);
+}
+
+function togglePauseSlideshow() {
+  isPaused = !isPaused;
+  document.getElementById('pause-button').innerHTML = isPaused
+    ? '&#9654;'
+    : '&#10074;&#10074;';
+}
+
+function showCurrentSlide() {
+  const container = document.getElementById('slideshow-image-container');
+  container.innerHTML = ''; // Clear previous images
+
+  // Decide how many images to show based on orientation
+  let slides = [];
+  let indexIncrement = 1;
+
+  const currentImage = images[currentIndex];
+  slides.push(currentImage);
+
+  const nextIndex = (currentIndex + 1) % images.length;
+
+  if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
+    // Show two portrait images side by side
+    slides.push(images[nextIndex]);
+    if (!isManual) indexIncrement = 2;
+  }
+
+  // Create image elements
+  slides.forEach((image) => {
+    const imgElement = document.createElement('img');
+    imgElement.src = `https://storage.googleapis.com/swastik_bucket-1/${encodeURIComponent(
+      image.name
+    )}`;
+    imgElement.classList.add('slideshow-image');
+    container.appendChild(imgElement);
+  });
+
+  // Adjust container class based on number of images
+  if (slides.length === 2) {
+    container.classList.add('two-images');
+  } else {
+    container.classList.remove('two-images');
+  }
+
+  // For manual mode, do not auto-increment currentIndex
+  if (!isManual) {
+    // Update currentIndex for next slide
+    currentIndex = (currentIndex + indexIncrement) % images.length;
+  }
+}
+
+function showNextSlide() {
+  if (isManual) {
+    // Increment currentIndex appropriately
+    let indexIncrement = 1;
+    const currentImage = images[currentIndex];
+    const nextIndex = (currentIndex + 1) % images.length;
+
+    if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
+      indexIncrement = 2;
     }
 
-    // Reset the slideshow interval when user interacts
-    function resetSlideshowInterval() {
-      if (slideshowInterval !== null) {
-        clearInterval(slideshowInterval);
-        const speedInput = document.getElementById('speed-input');
-        let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
-        slideshowInterval = setInterval(function() {
-          if (!isPaused) {
-            showNextSlide();
-          }
-        }, speed);
-      }
+    currentIndex = (currentIndex + indexIncrement) % images.length;
+  }
+  showCurrentSlide();
+}
+
+function showPreviousSlide() {
+  let indexDecrement = 1;
+  if (currentIndex > 0) {
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    const prevPrevIndex = (currentIndex - 2 + images.length) % images.length;
+
+    if (isPortrait(images[prevIndex]) && isPortrait(images[prevPrevIndex])) {
+      indexDecrement = 2;
     }
+  } else {
+    currentIndex = images.length;
+  }
+  currentIndex = (currentIndex - indexDecrement + images.length) % images.length;
+  showCurrentSlide();
+}
 
-    // Close slideshow when clicking outside images
-    document.getElementById('slideshow-fullscreen').addEventListener('click', function(event) {
-      if (event.target.id === 'slideshow-fullscreen') {
-        stopSlideshow();
+function isPortrait(image) {
+  return image.aspectRatio < 1;
+}
+
+// Handle keydown events during slideshow
+function handleSlideshowKeydown(event) {
+  if (event.key === 'ArrowLeft') {
+    event.preventDefault();
+    showPreviousSlide();
+    resetSlideshowInterval();
+  } else if (event.key === 'ArrowRight') {
+    event.preventDefault();
+    showNextSlide();
+    resetSlideshowInterval();
+  } else if (event.key === 'Escape') {
+    event.preventDefault();
+    stopSlideshow();
+  }
+}
+
+// Reset the slideshow interval when user interacts
+function resetSlideshowInterval() {
+  if (slideshowInterval !== null) {
+    clearInterval(slideshowInterval);
+    const speedInput = document.getElementById('speed-input');
+    let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
+    slideshowInterval = setInterval(function () {
+      if (!isPaused) {
+        showNextSlide();
       }
-    });
+    }, speed);
+  }
+}
 
-    // Prevent navigation buttons from closing the slideshow
-    document.getElementById('slideshow-nav').addEventListener('click', function(event) {
-      event.stopPropagation();
-    });
+// Event listeners for slideshow navigation buttons
+document.getElementById('prev-button').addEventListener('click', function (event) {
+  event.stopPropagation();
+  showPreviousSlide();
+});
+
+document.getElementById('next-button').addEventListener('click', function (event) {
+  event.stopPropagation();
+  showNextSlide();
+});
+
+document.getElementById('pause-button').addEventListener('click', function (event) {
+  event.stopPropagation();
+  togglePauseSlideshow();
+});
+
+// Exit button event listener
+document.getElementById('exit-button').addEventListener('click', function (event) {
+  event.stopPropagation();
+  stopSlideshow();
+});
+
+// Close slideshow when clicking outside images
+document
+  .getElementById('slideshow-fullscreen')
+  .addEventListener('click', function (event) {
+    if (event.target.id === 'slideshow-fullscreen') {
+      stopSlideshow();
+    }
+  });
+
+// Prevent navigation buttons from closing the slideshow
+document.getElementById('slideshow-nav').addEventListener('click', function (event) {
+  event.stopPropagation();
+});
+
 
   </script>
 
