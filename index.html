@@ -190,6 +190,24 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Slideshow button styles */
+    #slideshow-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    #slideshow-button:hover {
+      background-color: #4a0e78;
+    }
   </style>
 </head>
 <body>
@@ -205,6 +223,9 @@
   </video>
 
   <a href="https://swastik-infralogics.github.io/SAS03/" class="home-button">Home</a>
+
+  <!-- Slideshow Button -->
+  <button id="slideshow-button">Start Slideshow</button>
 
   <div class="main-container">
 
@@ -233,9 +254,20 @@
 
     let columns = 1; // Number of columns in the thumbnail grid
 
+    let slideshowInterval = null; // Slideshow interval ID
+
     document.addEventListener('DOMContentLoaded', function () {
       listImages();
       window.addEventListener('resize', updateColumns); // Recalculate columns on resize
+
+      // Slideshow button event listener
+      document.getElementById('slideshow-button').addEventListener('click', function() {
+        if (slideshowInterval === null) {
+          startSlideshow();
+        } else {
+          stopSlideshow();
+        }
+      });
     });
 
     async function listImages() {
@@ -284,6 +316,7 @@
             currentIndex = index;
             displayImage(currentIndex);
             highlightSelectedThumbnail(this);
+            stopSlideshow(); // Stop slideshow when a thumbnail is clicked
           });
         });
 
@@ -397,8 +430,6 @@
       }
 
       columns = columnCount;
-      // Optionally, you can log the number of columns for debugging
-      // console.log(`Number of columns: ${columns}`);
     }
 
     function zoomIn() {
@@ -423,7 +454,7 @@
       previewImage.style.transform = `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)`;
     }
 
-    // Optional: Allow zoom with mouse wheel while holding Ctrl
+    // Allow zoom with mouse wheel while holding Ctrl
     document.getElementById('preview-image').addEventListener('wheel', function(event) {
       if (event.ctrlKey) {
         event.preventDefault();
@@ -435,7 +466,7 @@
       }
     });
 
-    // Optional: Implement pinch-to-zoom for touch devices
+    // Implement pinch-to-zoom for touch devices
     let initialDistance = null;
 
     document.getElementById('preview-image').addEventListener('touchstart', function(event) {
@@ -563,7 +594,27 @@
 
     // Add keydown event listener
     document.addEventListener('keydown', handleKeyDown);
+
+    // Slideshow functions
+    function startSlideshow() {
+      if (slideshowInterval === null) {
+        slideshowInterval = setInterval(function() {
+          currentIndex = (currentIndex + 1) % images.length;
+          displayImage(currentIndex);
+          updateThumbnailSelection();
+        }, 3000); // Change image every 3 seconds
+        document.getElementById('slideshow-button').textContent = 'Stop Slideshow';
+      }
+    }
+
+    function stopSlideshow() {
+      if (slideshowInterval !== null) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+        document.getElementById('slideshow-button').textContent = 'Start Slideshow';
+      }
+    }
   </script>
 
 </body>
-</html>  
+</html>
