@@ -267,7 +267,7 @@
     }
 
     /* Fullscreen slideshow styles */
-    .slideshow-fullscreen {
+    #slideshow-fullscreen {
       position: fixed;
       top: 0;
       left: 0;
@@ -280,7 +280,7 @@
       align-items: center;
     }
 
-    .slideshow-image-container {
+    #slideshow-image-container {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -295,7 +295,7 @@
     }
 
     /* For displaying two portrait images side by side */
-    .slideshow-image-container.two-images .slideshow-image {
+    #slideshow-image-container.two-images .slideshow-image {
       width: 50%;
     }
   </style>
@@ -344,7 +344,7 @@
       <button id="pause-button" class="nav-button">&#10074;&#10074;</button>
       <button id="next-button" class="nav-button">&#9654;</button>
     </div>
-    <div id="slideshow-image-container" class="slideshow-image-container">
+    <div id="slideshow-image-container">
       <!-- Images will be injected here -->
     </div>
   </div>
@@ -744,6 +744,9 @@
       const speedInput = document.getElementById('speed-input');
       let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
 
+      isPaused = false;
+      document.getElementById('pause-button').innerHTML = '&#10074;&#10074;';
+
       document.getElementById('slideshow-button').disabled = true;
       document.getElementById('manual-button').disabled = true;
 
@@ -752,7 +755,8 @@
       document.querySelector('.preview-section').style.display = 'none';
       document.getElementById('slideshow-fullscreen').style.display = 'flex';
 
-      // Start slideshow
+      showCurrentSlide();
+
       if (!isManual) {
         slideshowInterval = setInterval(function() {
           if (!isPaused) {
@@ -760,7 +764,6 @@
           }
         }, speed);
       }
-      showCurrentSlide();
     }
 
     function stopSlideshow() {
@@ -793,17 +796,14 @@
       let indexIncrement = 1;
 
       const currentImage = images[currentIndex];
-      if (isPortrait(currentImage)) {
-        const nextIndex = currentIndex + 1;
-        if (nextIndex < images.length && isPortrait(images[nextIndex])) {
-          // Show two portrait images side by side
-          slides.push(currentImage, images[nextIndex]);
-          indexIncrement = 2;
-        } else {
-          slides.push(currentImage);
-        }
-      } else {
-        slides.push(currentImage);
+      slides.push(currentImage);
+
+      const nextIndex = (currentIndex + 1) % images.length;
+
+      if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
+        // Show two portrait images side by side
+        slides.push(images[nextIndex]);
+        indexIncrement = 2;
       }
 
       // Create image elements
@@ -821,18 +821,36 @@
         container.classList.remove('two-images');
       }
 
-      // Update currentIndex for next slide
-      currentIndex = (currentIndex + indexIncrement) % images.length;
+      // For manual mode, do not auto-increment currentIndex
+      if (!isManual) {
+        // Update currentIndex for next slide
+        currentIndex = (currentIndex + indexIncrement) % images.length;
+      }
     }
 
     function showNextSlide() {
+      if (isManual) {
+        // Increment currentIndex appropriately
+        let indexIncrement = 1;
+        const currentImage = images[currentIndex];
+        const nextIndex = (currentIndex + 1) % images.length;
+
+        if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
+          indexIncrement = 2;
+        }
+
+        currentIndex = (currentIndex + indexIncrement) % images.length;
+      }
       showCurrentSlide();
     }
 
     function showPreviousSlide() {
       let indexDecrement = 1;
       if (currentIndex > 0) {
-        if (isPortrait(images[currentIndex - 1]) && isPortrait(images[currentIndex - 2])) {
+        const prevIndex = (currentIndex - 1 + images.length) % images.length;
+        const prevPrevIndex = (currentIndex - 2 + images.length) % images.length;
+
+        if (isPortrait(images[prevIndex]) && isPortrait(images[prevPrevIndex])) {
           indexDecrement = 2;
         }
       } else {
