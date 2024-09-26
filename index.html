@@ -273,7 +273,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: black;
+      background-color: transparent; /* Changed from black to transparent */
       z-index: 9998;
       display: flex;
       justify-content: center;
@@ -343,6 +343,7 @@
       <button id="prev-button" class="nav-button">&#9664;</button>
       <button id="pause-button" class="nav-button">&#10074;&#10074;</button>
       <button id="next-button" class="nav-button">&#9654;</button>
+      <button id="exit-button" class="nav-button">Exit</button>
     </div>
     <div id="slideshow-image-container">
       <!-- Images will be injected here -->
@@ -385,16 +386,25 @@
       });
 
       // Slideshow navigation buttons
-      document.getElementById('prev-button').addEventListener('click', function() {
+      document.getElementById('prev-button').addEventListener('click', function(event) {
+        event.stopPropagation();
         showPreviousSlide();
       });
 
-      document.getElementById('next-button').addEventListener('click', function() {
+      document.getElementById('next-button').addEventListener('click', function(event) {
+        event.stopPropagation();
         showNextSlide();
       });
 
-      document.getElementById('pause-button').addEventListener('click', function() {
+      document.getElementById('pause-button').addEventListener('click', function(event) {
+        event.stopPropagation();
         togglePauseSlideshow();
+      });
+
+      // Exit button event listener
+      document.getElementById('exit-button').addEventListener('click', function(event) {
+        event.stopPropagation();
+        stopSlideshow();
       });
     });
 
@@ -755,6 +765,14 @@
       document.querySelector('.preview-section').style.display = 'none';
       document.getElementById('slideshow-fullscreen').style.display = 'flex';
 
+      // Add keydown event listener for slideshow navigation
+      document.addEventListener('keydown', handleSlideshowKeydown);
+
+      // Ensure currentIndex is valid
+      if (currentIndex < 0 || currentIndex >= images.length) {
+        currentIndex = 0;
+      }
+
       showCurrentSlide();
 
       if (!isManual) {
@@ -780,6 +798,9 @@
       document.querySelector('.gallery-section').style.display = 'block';
       document.querySelector('.preview-section').style.display = 'flex';
       document.getElementById('slideshow-fullscreen').style.display = 'none';
+
+      // Remove keydown event listener for slideshow navigation
+      document.removeEventListener('keydown', handleSlideshowKeydown);
     }
 
     function togglePauseSlideshow() {
@@ -803,7 +824,7 @@
       if (isPortrait(currentImage) && isPortrait(images[nextIndex])) {
         // Show two portrait images side by side
         slides.push(images[nextIndex]);
-        indexIncrement = 2;
+        if (!isManual) indexIncrement = 2;
       }
 
       // Create image elements
@@ -862,6 +883,33 @@
 
     function isPortrait(image) {
       return image.aspectRatio < 1;
+    }
+
+    // Handle keydown events during slideshow
+    function handleSlideshowKeydown(event) {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        showPreviousSlide();
+        resetSlideshowInterval();
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        showNextSlide();
+        resetSlideshowInterval();
+      }
+    }
+
+    // Reset the slideshow interval when user interacts
+    function resetSlideshowInterval() {
+      if (slideshowInterval !== null) {
+        clearInterval(slideshowInterval);
+        const speedInput = document.getElementById('speed-input');
+        let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
+        slideshowInterval = setInterval(function() {
+          if (!isPaused) {
+            showNextSlide();
+          }
+        }, speed);
+      }
     }
 
     // Close slideshow when clicking outside images
