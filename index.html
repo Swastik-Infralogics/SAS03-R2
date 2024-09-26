@@ -191,22 +191,53 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Slideshow button styles */
-    #slideshow-button {
+    /* Slideshow button and speed input styles */
+    #slideshow-controls {
       position: fixed;
       top: 20px;
       right: 20px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+
+    #slideshow-button {
       padding: 10px 20px;
       background-color: #6a1b9a;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      z-index: 10;
+      margin-right: 10px;
     }
 
     #slideshow-button:hover {
       background-color: #4a0e78;
+    }
+
+    #speed-label {
+      margin-right: 5px;
+      color: #fff;
+    }
+
+    #speed-input {
+      width: 50px;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    /* Preview thumbnail styles */
+    .preview-thumbnail {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 100px;
+      height: auto;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+      display: none; /* Hide by default */
     }
   </style>
 </head>
@@ -224,8 +255,12 @@
 
   <a href="https://swastik-infralogics.github.io/SAS03/" class="home-button">Home</a>
 
-  <!-- Slideshow Button -->
-  <button id="slideshow-button">Start Slideshow</button>
+  <!-- Slideshow Controls -->
+  <div id="slideshow-controls">
+    <button id="slideshow-button">Start Slideshow</button>
+    <label for="speed-input" id="speed-label">Speed (s):</label>
+    <input type="number" id="speed-input" min="1" value="3">
+  </div>
 
   <div class="main-container">
 
@@ -236,6 +271,7 @@
 
     <div class="preview-section">
       <img id="preview-image" src="" alt="">
+      <img id="next-image-preview" src="" alt="" class="preview-thumbnail">
     </div>
 
   </div>
@@ -358,6 +394,7 @@
             currentIndex--;
             displayImage(currentIndex);
             updateThumbnailSelection();
+            updatePreviewImage();
           }
           break;
         case 'ArrowRight':
@@ -366,6 +403,7 @@
             currentIndex++;
             displayImage(currentIndex);
             updateThumbnailSelection();
+            updatePreviewImage();
           }
           break;
         case 'ArrowUp':
@@ -374,10 +412,12 @@
             currentIndex -= columns;
             displayImage(currentIndex);
             updateThumbnailSelection();
+            updatePreviewImage();
           } else if (currentIndex > 0) {
             currentIndex = 0;
             displayImage(currentIndex);
             updateThumbnailSelection();
+            updatePreviewImage();
           }
           break;
         case 'ArrowDown':
@@ -386,10 +426,12 @@
             currentIndex += columns;
             displayImage(currentIndex);
             updateThumbnailSelection();
+            updatePreviewImage();
           } else if (currentIndex < images.length - 1) {
             currentIndex = images.length - 1;
             displayImage(currentIndex);
             updateThumbnailSelection();
+            updatePreviewImage();
           }
           break;
         case '+':
@@ -598,12 +640,24 @@
     // Slideshow functions
     function startSlideshow() {
       if (slideshowInterval === null) {
+        const speedInput = document.getElementById('speed-input');
+        let speed = parseInt(speedInput.value) * 1000; // Convert to milliseconds
         slideshowInterval = setInterval(function() {
           currentIndex = (currentIndex + 1) % images.length;
           displayImage(currentIndex);
           updateThumbnailSelection();
-        }, 3000); // Change image every 3 seconds
+          updatePreviewImage();
+        }, speed);
         document.getElementById('slideshow-button').textContent = 'Stop Slideshow';
+
+        // Request full screen
+        openFullscreen();
+
+        // Hide gallery section to show full screen image
+        document.querySelector('.gallery-section').style.display = 'none';
+
+        // Show preview thumbnail
+        updatePreviewImage();
       }
     }
 
@@ -612,7 +666,48 @@
         clearInterval(slideshowInterval);
         slideshowInterval = null;
         document.getElementById('slideshow-button').textContent = 'Start Slideshow';
+
+        // Exit full screen
+        closeFullscreen();
+
+        // Show gallery section again
+        document.querySelector('.gallery-section').style.display = 'block';
+
+        // Hide preview thumbnail
+        document.getElementById('next-image-preview').style.display = 'none';
       }
+    }
+
+    /* View in fullscreen */
+    function openFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+      }
+    }
+
+    /* Close fullscreen */
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
+    }
+
+    // Update preview image
+    function updatePreviewImage() {
+      const nextIndex = (currentIndex + 1) % images.length;
+      const previewImage = document.getElementById('next-image-preview');
+      const imageUrl = `https://storage.googleapis.com/swastik_bucket-1/${encodeURIComponent(images[nextIndex].name)}`;
+      previewImage.src = imageUrl;
+      previewImage.style.display = 'block';
     }
   </script>
 
